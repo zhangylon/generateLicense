@@ -33,7 +33,7 @@ import java.util.Set;
  * 可以脱离Spring环境运行，用于生成License文件
  */
 public class LicenseGeneratorTool {
-    
+
     private static final Scanner scanner = new Scanner(System.in);
     private static final Logger log = LoggerFactory.getLogger(LicenseGeneratorTool.class);
 
@@ -43,13 +43,13 @@ public class LicenseGeneratorTool {
             62L, 63L, 64L, 65L, 66L, 67L, 68L, 69L, 70L, 71L, 72L, 73L, 74L, 75L, 76L, 77L, 78L, 79L, 80L, 81L, 82L, 83L, 84L, 85L,
             86L, 87L, 88L, 89L, 90L, 91L, 92L, 93L, 94L, 95L, 96L, 97L, 98L, 99L, 100L, 101L, 102L, 103L, 104L, 105L, 106L, 107L, 108L};
 
-    private static String[] allowedModules = new String[]{"/task","/task/list", "/task/create", "/useCase", "/result", "/system"};
+    private static String[] allowedModules = new String[]{"/task", "/task/list", "/task/create", "/useCase", "/result", "/system"};
 
     public static void main(String[] args) {
         System.out.println("=================================");
         System.out.println("    License生成器工具 v1.0");
         System.out.println("=================================");
-        
+
         try {
             showMainMenu();
         } catch (Exception e) {
@@ -57,7 +57,7 @@ public class LicenseGeneratorTool {
             e.printStackTrace();
         }
     }
-    
+
     private static void showMainMenu() throws Exception {
         while (true) {
             System.out.println("\n请选择操作：");
@@ -66,9 +66,9 @@ public class LicenseGeneratorTool {
             System.out.println("3. 生成硬件指纹采集脚本");
             System.out.println("4. 退出");
             System.out.print("请输入选项 (1-4): ");
-            
+
             String choice = scanner.nextLine().trim();
-            
+
             switch (choice) {
                 case "1":
                     generateKeyPair();
@@ -87,72 +87,72 @@ public class LicenseGeneratorTool {
             }
         }
     }
-    
+
     /**
      * 生成RSA密钥对
      */
     private static void generateKeyPair() throws Exception {
         System.out.println("\n正在生成RSA密钥对...");
-        
+
         LicenseKeyManager keyManager = new LicenseKeyManager();
         KeyPairResult keyPair = keyManager.generateKeyPair();
-        
+
         // 保存公钥
         String publicKeyFile = "license_public_key.txt";
         Files.write(Paths.get(publicKeyFile), keyPair.getPublicKey().getBytes());
-        
+
         // 保存私钥
         String privateKeyFile = "license_private_key.txt";
         Files.write(Paths.get(privateKeyFile), keyPair.getPrivateKey().getBytes());
-        
+
         System.out.println("密钥对生成成功！");
         System.out.println("公钥已保存到: " + publicKeyFile);
         System.out.println("私钥已保存到: " + privateKeyFile);
         System.out.println("⚠️  请妥善保管私钥文件，不要泄露给他人");
-        
+
         System.out.println("\n公钥内容（用于配置验证系统）：");
         System.out.println("-----BEGIN PUBLIC KEY-----");
         System.out.println(keyPair.getPublicKey());
         System.out.println("-----END PUBLIC KEY-----");
     }
-    
+
     /**
      * 生成License文件
      */
     private static void generateLicense() throws Exception {
         System.out.println("\n=== License文件生成 ===");
-        
+
         // 输入基本信息
         System.out.print("被许可人名称: ");
         String licensee = scanner.nextLine().trim();
-        
+
         System.out.print("License类型 (TRIAL/STANDARD/ENTERPRISE): ");
         String licenseType = scanner.nextLine().trim().toUpperCase();
-        
+
         System.out.print("硬件指纹: ");
         String hardwareFingerprint = scanner.nextLine().trim();
-        
+
         String expiryDateStr;
         LocalDateTime expiryDate;
         while (true) {
-            System.out.print("过期日期（格式：yyyy-MM-dd HH:mm，例如：2025-06-16 15:00）: ");
+            System.out.print("过期日期（格式：yyyy-MM-dd HH:mm，例如：2025-06-16 15:00:00）: ");
             expiryDateStr = scanner.nextLine().trim();
             try {
-                expiryDate = LocalDateTime.parse(expiryDateStr, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+                expiryDate = LocalDateTime.parse(expiryDateStr, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
                 if (expiryDate.isBefore(LocalDateTime.now())) {
                     System.out.println("错误：过期日期不能小于当前日期，请重新输入");
                     continue;
                 }
                 break;
             } catch (Exception e) {
-                System.out.println("日期格式错误，请按照yyyy-MM-dd HH:mm格式重新输入");
+                System.out.println("日期格式错误，请按照yyyy-MM-dd HH:mm:ss格式重新输入");
             }
         }
 
         System.out.print("最大用户数量（默认为10）: ");
         int maxUserCount = 10;
         String maxUserCountStr = scanner.nextLine().trim();
-        if (!StringUtils.isBlank(maxUserCountStr)){
+        if (!StringUtils.isBlank(maxUserCountStr)) {
             maxUserCount = Integer.parseInt(scanner.nextLine().trim());
         }
 
@@ -174,7 +174,7 @@ public class LicenseGeneratorTool {
             Set<String> strings = new HashSet<>();
             for (int i = 0; i < split.length; i++) {
                 String s = split[i];
-                if (("/task").equals(s)){
+                if (("/task").equals(s)) {
                     strings.add("/task/list");
                     strings.add("/task/create");
                 }
@@ -191,7 +191,7 @@ public class LicenseGeneratorTool {
                 .enabledModules(Arrays.asList(allowedModules))
                 .allowedItemIds(Arrays.asList(allowedItemIds))
                 .build();
-        
+
         LicenseInfo licenseInfo = LicenseInfo.builder()
                 .version("1.0")
                 .issueDate(LocalDateTime.now())
@@ -201,26 +201,26 @@ public class LicenseGeneratorTool {
                 .hardwareFingerprint(hardwareFingerprint)
                 .features(features)
                 .build();
-        
+
         // 读取私钥
         System.out.print("私钥文件路径 (默认: license_private_key.txt): ");
         String privateKeyPath = scanner.nextLine().trim();
         if (privateKeyPath.isEmpty()) {
             privateKeyPath = "license_private_key.txt";
         }
-        
+
         String privateKeyStr = new String(Files.readAllBytes(Paths.get(privateKeyPath)));
-        
+
         // 生成签名
         String licenseContent = buildLicenseContent(licenseInfo);
         String signature = signContent(licenseContent, privateKeyStr);
-        log.info("【签名内容：{}，签名：{}，私钥：{}】", licenseContent, signature,privateKeyStr);
-        
+        log.info("【签名内容：{}，签名：{}，私钥：{}】", licenseContent, signature, privateKeyStr);
+
         // 构建完整License文件
         Map<String, Object> licenseFile = new LinkedHashMap<>();
         licenseFile.put("licenseInfo", licenseInfo);
         licenseFile.put("signature", signature);
-        
+
         String jsonContent = JSON.toJSONString(licenseFile, SerializerFeature.PrettyFormat);
         String encryptedContent = jsonContent;
         if ("Y".equals(encryptChoice)) {
@@ -228,19 +228,19 @@ public class LicenseGeneratorTool {
             encryptedContent = LicenseEncryptionUtil.encryptWithHardwareFingerprint(
                     jsonContent, hardwareFingerprint);
         }
-        
+
         // 保存License文件（使用.lic扩展名）
-        String fileName = "license_" + licensee + "_" + 
-                         LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")) + ".lic";
+        String fileName = "license_" + licensee + "_" +
+                LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")) + ".lic";
         Files.write(Paths.get(fileName), encryptedContent.getBytes(StandardCharsets.UTF_8));
-        
+
         System.out.println("\nLicense文件生成成功！");
         System.out.println("文件保存位置: " + fileName);
         System.out.println("License类型: " + licenseType);
         System.out.println("被许可人: " + licensee);
         System.out.println("有效期至: " + expiryDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
     }
-    
+
     /**
      * 生成硬件指纹采集脚本
      */
@@ -250,9 +250,9 @@ public class LicenseGeneratorTool {
         System.out.println("1. Windows (.bat)");
         System.out.println("2. Linux/Unix (.sh)");
         System.out.print("请选择 (1-2): ");
-        
+
         String choice = scanner.nextLine().trim();
-        
+
         switch (choice) {
             case "1":
                 generateWindowsScript();
@@ -264,7 +264,7 @@ public class LicenseGeneratorTool {
                 System.out.println("无效选项");
         }
     }
-    
+
     private static void generateWindowsScript() throws Exception {
         String script = "@echo off\n" +
                 "echo 开始采集硬件指纹...\n" +
@@ -283,11 +283,11 @@ public class LicenseGeneratorTool {
                 "echo.\n" +
                 "echo 请将上述信息发送给License管理员\n" +
                 "pause\n";
-        
+
         Files.write(Paths.get("hardware_fingerprint_collector.bat"), script.getBytes(StandardCharsets.UTF_8));
         System.out.println("Windows采集脚本已生成: hardware_fingerprint_collector.bat");
     }
-    
+
     private static void generateLinuxScript() throws Exception {
         String script = "#!/bin/bash\n" +
                 "echo '开始采集硬件指纹...'\n" +
@@ -308,12 +308,12 @@ public class LicenseGeneratorTool {
                 "dmidecode -s baseboard-serial-number 2>/dev/null || echo '需要root权限获取主板信息'\n" +
                 "echo ''\n" +
                 "echo '请将上述信息发送给License管理员'\n";
-        
+
         Files.write(Paths.get("hardware_fingerprint_collector.sh"), script.getBytes(StandardCharsets.UTF_8));
         System.out.println("Linux采集脚本已生成: hardware_fingerprint_collector.sh");
         System.out.println("使用方法: chmod +x hardware_fingerprint_collector.sh && ./hardware_fingerprint_collector.sh");
     }
-    
+
     /**
      * 构建License内容
      */
@@ -326,10 +326,10 @@ public class LicenseGeneratorTool {
         contentMap.put("licensee", licenseInfo.getLicensee());
         contentMap.put("hardwareFingerprint", licenseInfo.getHardwareFingerprint());
         contentMap.put("features", licenseInfo.getFeatures());
-        
+
         return JSON.toJSONString(contentMap);
     }
-    
+
     /**
      * 对内容进行数字签名
      */
@@ -338,11 +338,11 @@ public class LicenseGeneratorTool {
         PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(keyBytes);
         KeyFactory keyFactory = KeyFactory.getInstance("RSA");
         PrivateKey privateKey = keyFactory.generatePrivate(spec);
-        
+
         Signature signature = Signature.getInstance("SHA256withRSA");
         signature.initSign(privateKey);
         signature.update(content.getBytes(StandardCharsets.UTF_8));
-        
+
         byte[] signatureBytes = signature.sign();
         return Base64.getEncoder().encodeToString(signatureBytes);
     }
