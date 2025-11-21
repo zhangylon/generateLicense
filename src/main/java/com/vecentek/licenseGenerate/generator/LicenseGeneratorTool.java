@@ -44,7 +44,8 @@ public class LicenseGeneratorTool {
             86L, 87L, 88L, 89L, 90L, 91L, 92L, 93L, 94L, 95L, 96L, 97L, 98L, 99L, 100L, 101L, 102L, 103L, 104L, 105L, 106L, 107L,
             108L, 109L, 110L, 111L, 112L, 113L,114L,115L,116L, 117L, 118L, 119L, 120L, 121L, 122L, 103807441762961L, 119418510061697L};
 
-    private static String[] allowedModules = new String[]{"/task", "/task/list", "/task/create", "/useCase", "/result", "/system"};
+    private static String[] allowedModules = new String[]{"/task", "/task/list", "/task/create", "/useCase", "/result", "/system",
+            "/randomOfCaseSamples","/resource","/resource/white-list-file","/resource/virus-attack-file-list"};
 
     public static void main(String[] args) {
         System.out.println("=================================");
