@@ -46,7 +46,8 @@ public class LicenseGeneratorTool {
             117728923619074L, 117738845434130L, 117740012127985L, 117742378107505L, 117743877677745L, 117746277219074L, 117749688714978L};
 
     private static String[] allowedModules = new String[]{"/task", "/task/list", "/task/create", "/useCase", "/result", "/system",
-            "/randomOfCaseSamples","/resource","/resource/white-list-file","/resource/virus-attack-file-list"};
+            "/randomOfCaseSamples","/resource","/resource/white-list-file","/resource/virus-attack-file-list","/vd",
+            "/vd/localVD","/vd/networkVD","/high","/high/script"};
 
     public static void main(String[] args) {
         System.out.println("=================================");
@@ -226,15 +227,17 @@ public class LicenseGeneratorTool {
 
         String jsonContent = JSON.toJSONString(licenseFile, SerializerFeature.PrettyFormat);
         String encryptedContent = jsonContent;
+        String encryStr = "非加密";
         if ("Y".equals(encryptChoice)) {
             // 加密License内容
             encryptedContent = LicenseEncryptionUtil.encryptWithHardwareFingerprint(
                     jsonContent, hardwareFingerprint);
+            encryStr = "加密";
         }
 
         // 保存License文件（使用.lic扩展名）
         String fileName = "license_" + hardwareFingerprint + "_" +licensee + "_" +
-                LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")) + ".lic";
+                LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"))+"_"+encryStr + ".lic";
         Files.write(Paths.get(fileName), encryptedContent.getBytes(StandardCharsets.UTF_8));
 
         System.out.println("\nLicense文件生成成功！");
