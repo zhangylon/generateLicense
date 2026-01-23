@@ -47,7 +47,7 @@ public class LicenseGeneratorTool {
 
     private static String[] allowedModules = new String[]{"/task", "/task/list", "/task/create", "/useCase", "/result", "/system",
             "/randomOfCaseSamples","/resource","/resource/white-list-file","/resource/virus-attack-file-list","/vd",
-            "/vd/localVD","/vd/networkVD","/high","/high/script"};
+            "/vd/localVD","/vd/networkVD","/high","/high/script","/high/tools"};
 
     public static void main(String[] args) {
         System.out.println("=================================");
